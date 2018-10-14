@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.asad.game</groupId>
+    <artifactId>kill-bill</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.plugins>3.8.0</maven.compiler.plugins>
+        <powermock.version>1.7.4</powermock.version>
+        <jacco.maven.plugin.version>0.8.2</jacco.maven.plugin.version>
+        <maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.asad.game.GameStarter</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacco.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-test-suit</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-unit-test-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugins}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
