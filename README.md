@@ -1,9 +1,9 @@
-#Kill-Bill - Vol 1
+# Kill-Bill - Vol 1
 ![alt text](https://hoodrichnyc-public.s3.amazonaws.com/site-assets/event_images/event/2018/may/killbill.jpg)
-##Pre Requisite
+## Pre Requisite
 This Application can run on `JAVA-8` or above only.
 you need keyboard to play the game.
-###Controls
+### Controls
 Small one liner menu will always come to help you decide between possible values.
 Here are the possible inputs required in this game
 ````
@@ -17,7 +17,7 @@ x - To quit the game.
 y - for YES
 n - for NO
 ````
-##Plot
+## Plot
 In this game main character has been torchered in the beginning,
 now the main character has decided to take revenge by fighting with them and kill them.
    
@@ -27,7 +27,7 @@ Game has three chapter.
 - In the second chapter you will face two opponents first with - `Gogo Yubari` and then Boss of the chapter - `O-Ren Ishii`
 - In the last chapter you will face again two opponents first opponent will be - `Budd` and after him the BOSS of the game will come - `Bill`  
 
-##Friendly Cells
+## Friendly Cells
 if a cell is filled with color it means it's a friendly place.
 #### Training Arena
 Get Inside of Training arena to improve skills but you will loose some health.
@@ -47,4 +47,3 @@ so keep an eye on your attributes (just above the map) before challenge you oppo
 
 Every stage has one boss only, you cannot challenge your Boss directly unless you are done with opponent's sidekicks.
 if you are less in health compare to opponent new Helper places will automatically come to improve.
- 
