@@ -2,6 +2,7 @@ package org.asad.game.executer;
 
 import org.asad.game.MockData;
 import org.asad.game.draw.PrintChainInterface;
+import org.asad.game.entity.Location;
 import org.asad.game.entity.chapter.Chapter;
 import org.asad.game.entity.chapter.ChapterFactory;
 import org.asad.game.helper.ConsoleLogger;
@@ -50,6 +51,16 @@ public class ControllerThreadTest {
         PowerMockito.doNothing().when(printStatusChain).draw();
         PowerMockito.doNothing().when(GameUtil.class, "exitGame");
         PowerMockito.when(GameUtil.readUserInput()).thenReturn("Asad Abdin :)");
+        PowerMockito.when(GameUtil.isGameOver()).thenAnswer(new Answer() {
+            private int count = 0;
+            public Boolean answer(InvocationOnMock invocation) {
+                if (++count == 1)
+                    return false;
+
+                return true;
+            }
+        });
+
         PowerMockito.doNothing().when(ConsoleLogger.class, "println", Mockito.anyString());
         PowerMockito.doNothing().when(ConsoleLogger.class, "print", Mockito.anyString());
         PowerMockito.doNothing().when(ConsoleLogger.class, "printPoster", Mockito.anyString());
@@ -135,6 +146,17 @@ public class ControllerThreadTest {
         Chapter chapter = MockData.getChapter();
         chapter.getPlaces().removeIf(place -> true);
         chapter.getHero().setHealth(0);
+        PowerMockito.when(GameUtil.isGameOver()).thenAnswer(new Answer() {
+            private int count = 0;
+            public Boolean answer(InvocationOnMock invocation) {
+                count++;
+                if (count == 1 || count == 2 ) {
+                    return false;
+                }
+
+                return true;
+            }
+        });
         Mockito.doAnswer(new Answer() {
             private int count = 0;
             public Chapter answer(InvocationOnMock invocation) {

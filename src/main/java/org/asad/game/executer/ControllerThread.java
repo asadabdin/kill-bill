@@ -22,7 +22,7 @@ public class ControllerThread implements Runnable {
     private PrintChainInterface printStatusChain;
     private Location heroLastLocation;
     int placesCount;
-    boolean farstcall;
+    boolean firstCall;
 
 
     public ControllerThread(BlockingQueue<Chapter> inQueue, BlockingQueue<Chapter> outQueue) {
@@ -59,7 +59,7 @@ public class ControllerThread implements Runnable {
         }
         placesCount = chapter.getPlaces().size();
         try {
-            farstcall = true;
+            firstCall = true;
             executor();
         } catch (InterruptedException e) {
             ConsoleLogger.print(e.getMessage());
@@ -72,10 +72,10 @@ public class ControllerThread implements Runnable {
      */
     private void executor() throws InterruptedException {
         do {
-            if (!farstcall) {
+            if (!firstCall) {
                 chapter = inQueue.take();
             } else {
-                farstcall = false;
+                firstCall = false;
             }
             if (null != chapter) {
                 if (null == heroLastLocation || heroLastLocation != chapter.getHero().getLocation()) {
@@ -98,7 +98,6 @@ public class ControllerThread implements Runnable {
                 outQueue.put(chapter);
             }
         } while(!GameUtil.isGameOver());
-        Thread.currentThread().notifyAll();
     }
 
     private void startNewChapter() {

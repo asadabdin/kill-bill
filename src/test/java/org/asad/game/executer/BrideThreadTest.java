@@ -39,6 +39,16 @@ public class BrideThreadTest {
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(ConsoleLogger.class);
         PowerMockito.mockStatic(GameUtil.class);
+        PowerMockito.when(GameUtil.isGameOver()).thenAnswer(new Answer() {
+            private int count = 0;
+            public Boolean answer(InvocationOnMock invocation) {
+                if (++count == 1)
+                    return false;
+
+                return true;
+            }
+        });
+
         PowerMockito.doNothing().when(ConsoleLogger.class, "println", Mockito.anyString());
         PowerMockito.when(inQueue.take()).thenAnswer(new Answer() {
             private int count = 0;
