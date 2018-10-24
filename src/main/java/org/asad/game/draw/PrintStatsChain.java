@@ -4,6 +4,7 @@ import org.asad.game.entity.AtomEntity;
 import org.asad.game.entity.chapter.Chapter;
 import org.asad.game.entity.place.Place;
 import org.asad.game.helper.ConsoleLogger;
+import org.asad.game.helper.GameUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,28 +46,30 @@ public class PrintStatsChain implements PrintChainInterface {
      */
     @Override
     public void draw() {
-        ConsoleLogger.println("######################## Player Stats ################################");
-        List<Place> opponents = chapter.getPlaces().stream().filter(place -> null != place.getPlayer()).collect(Collectors.toList());
-        ConsoleLogger.println(headerCeiling);
-        IntStream.range(0, (opponents.size()+2)).forEach(i -> {
-            ConsoleLogger.print("|");
-            IntStream.range(0, headers.size()).forEach(j -> {
-                if (i == 0) {
-                    printContentInTheCenter(headers.get(j), "");
-                } else if (i == 1) {
-                    printCellData(j, chapter.getHero());
-                } else {
-                    int indexOfOpponent = i-2;
-                    printCellData(j, opponents.get(indexOfOpponent));
-                }
+        if (!GameUtil.isGameOver()) {
+            ConsoleLogger.println("######################## Player Stats ################################");
+            List<Place> opponents = chapter.getPlaces().stream().filter(place -> null != place.getPlayer()).collect(Collectors.toList());
+            ConsoleLogger.println(headerCeiling);
+            IntStream.range(0, (opponents.size() + 2)).forEach(i -> {
+                ConsoleLogger.print("|");
+                IntStream.range(0, headers.size()).forEach(j -> {
+                    if (i == 0) {
+                        printContentInTheCenter(headers.get(j), "");
+                    } else if (i == 1) {
+                        printCellData(j, chapter.getHero());
+                    } else {
+                        int indexOfOpponent = i - 2;
+                        printCellData(j, opponents.get(indexOfOpponent));
+                    }
+                });
+                ConsoleLogger.println("");
             });
-            ConsoleLogger.println("");
-        });
 
-        if(paintChain !=null && !chapter.getPlaces().isEmpty()){
-            ConsoleLogger.println("");
-            ConsoleLogger.println("");
-            paintChain.draw();
+            if (paintChain != null && !chapter.getPlaces().isEmpty()) {
+                ConsoleLogger.println("");
+                ConsoleLogger.println("");
+                paintChain.draw();
+            }
         }
     }
 

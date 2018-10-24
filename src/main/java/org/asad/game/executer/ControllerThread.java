@@ -22,6 +22,7 @@ public class ControllerThread implements Runnable {
     private PrintChainInterface printStatusChain;
     private Location heroLastLocation;
     int placesCount;
+    boolean farstcall;
 
 
     public ControllerThread(BlockingQueue<Chapter> inQueue, BlockingQueue<Chapter> outQueue) {
@@ -34,6 +35,7 @@ public class ControllerThread implements Runnable {
      */
     @Override
     public void run() {
+        Thread.currentThread().setName("Controller Thread");
         if (GameUtil.hasFoundPreviousSaveGameToResume()) {
             do {
                 ConsoleLogger.println("Choose correct option : Press 'n' for new Game --  'r' to resume Game");
@@ -57,6 +59,7 @@ public class ControllerThread implements Runnable {
         }
         placesCount = chapter.getPlaces().size();
         try {
+            farstcall = true;
             executor();
         } catch (InterruptedException e) {
             ConsoleLogger.print(e.getMessage());
@@ -69,25 +72,33 @@ public class ControllerThread implements Runnable {
      */
     private void executor() throws InterruptedException {
         do {
-            if (null == heroLastLocation || heroLastLocation != chapter.getHero().getLocation()) {
-                heroLastLocation = chapter.getHero().getLocation();
-                if (placesCount != chapter.getPlaces().size()) {
-                    placesCount = chapter.getPlaces().size();
-                    if (chapter.getHero().getHealth() > 0) {
-                        if (chapter.getPlaces().stream().filter(place -> null != place.getPlayer()).count() == 0) {
-                            startNewChapter();
-                        }
-                    } else {
-                        ConsoleLogger.println("You Lost the fight");
-                        ConsoleLogger.printPoster("gameOver");
-                        GameUtil.exitGame();
-                    }
-                    GameUtil.checkAndCreateNewPlacesIfRequired(chapter);
-                }
-                printStatusChain.draw();
+            if (!farstcall) {
+                chapter = inQueue.take();
+            } else {
+                farstcall = false;
             }
-            outQueue.put(chapter);
-        } while((chapter = inQueue.take()) != null);
+            if (null != chapter) {
+                if (null == heroLastLocation || heroLastLocation != chapter.getHero().getLocation()) {
+                    heroLastLocation = chapter.getHero().getLocation();
+                    if (placesCount != chapter.getPlaces().size()) {
+                        placesCount = chapter.getPlaces().size();
+                        if (chapter.getHero().getHealth() > 0) {
+                            if (chapter.getPlaces().stream().filter(place -> null != place.getPlayer()).count() == 0) {
+                                startNewChapter();
+                            }
+                        } else {
+                            ConsoleLogger.println("You Lost the fight");
+                            ConsoleLogger.printPoster("gameOver");
+                            GameUtil.exitGame();
+                        }
+                        GameUtil.checkAndCreateNewPlacesIfRequired(chapter);
+                    }
+                    printStatusChain.draw();
+                }
+                outQueue.put(chapter);
+            }
+        } while(!GameUtil.isGameOver());
+        Thread.currentThread().notifyAll();
     }
 
     private void startNewChapter() {

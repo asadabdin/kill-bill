@@ -37,7 +37,7 @@ public class ChapterFactory {
                 GameUtil.exitGame();
             }
         }
-        return null;
+        return chapter;
     }
 
     private static Chapter openChapter(Hero hero, ChapterLevel chapterLevel) {

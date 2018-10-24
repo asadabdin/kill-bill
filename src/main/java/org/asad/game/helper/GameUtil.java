@@ -1,5 +1,9 @@
 package org.asad.game.helper;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import org.asad.game.entity.Location;
 import org.asad.game.entity.chapter.Chapter;
 import org.asad.game.entity.chapter.ChapterFactory;
@@ -11,7 +15,6 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +30,8 @@ public class GameUtil {
      * the file on which game will be saved.
      */
     private static final String SAVE_FILE = "killBill.save";
+
+    private static boolean gameOver;
 
 
     /**
@@ -109,7 +114,11 @@ public class GameUtil {
      */
     public static void exitGame() {
         SCANNER.close();
-        System.exit(0);
+        gameOver = true;
+    }
+
+    public static boolean isGameOver() {
+        return gameOver;
     }
 
     /**
@@ -141,17 +150,19 @@ public class GameUtil {
      * it adds few more helping Places to gain Money, Health, Skill or decrease Anxiety.
      */
     public static void checkAndCreateNewPlacesIfRequired(Chapter chapter) {
-        AtomicReference<Integer> heroHealth = new AtomicReference<>(chapter.getHero().getHealth());
-        Map<Boolean, List<Place>> objectListMap = chapter.getPlaces().stream().collect(Collectors.groupingBy(place -> place.getPlayer() == null));
-        if (!objectListMap.containsKey(Boolean.TRUE)
-                && objectListMap.containsKey(Boolean.FALSE)
-                && objectListMap.get(Boolean.FALSE).stream().filter(place -> place.getPlayer().getHealth() > heroHealth.get()).count() > 0 ) {
-            AtomicReference<Chapter> chapterAtomicReference = new AtomicReference<>(chapter);
-            chapter.getPlaces().add(new HideOut(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
-            chapter.getPlaces().add(new HideOut(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
-            chapter.getPlaces().add(new TrainingArena(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
-            chapter.getPlaces().add(new WorkPlace(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
-            chapter.getPlaces().forEach(place -> chapterAtomicReference.get().getMap()[place.getLocation().getX()][place.getLocation().getY()] = place);
+        if (!isGameOver()) {
+            IntegerProperty heroHealth = new SimpleIntegerProperty(chapter.getHero().getHealth());
+            Map<Boolean, List<Place>> objectListMap = chapter.getPlaces().stream().collect(Collectors.groupingBy(place -> place.getPlayer() == null));
+            if (!objectListMap.containsKey(Boolean.TRUE)
+                    && objectListMap.containsKey(Boolean.FALSE)
+                    && objectListMap.get(Boolean.FALSE).stream().filter(place -> place.getPlayer().getHealth() > heroHealth.get()).count() > 0) {
+                ObjectProperty<Chapter> chapterObjectProperty = new SimpleObjectProperty(chapter);
+                chapter.getPlaces().add(new HideOut(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
+                chapter.getPlaces().add(new HideOut(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
+                chapter.getPlaces().add(new TrainingArena(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
+                chapter.getPlaces().add(new WorkPlace(ChapterFactory.getUniqueLocation(chapter.getPlaces())));
+                chapter.getPlaces().forEach(place -> chapterObjectProperty.get().getMap()[place.getLocation().getX()][place.getLocation().getY()] = place);
+            }
         }
     }
 }
