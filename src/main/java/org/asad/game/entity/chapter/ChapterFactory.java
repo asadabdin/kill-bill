@@ -1,5 +1,9 @@
 package org.asad.game.entity.chapter;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import org.asad.game.entity.Location;
 import org.asad.game.entity.place.*;
 import org.asad.game.entity.player.PlayerEnum;
@@ -10,7 +14,6 @@ import org.asad.game.helper.GameUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ChapterFactory {
 
@@ -69,23 +72,22 @@ public class ChapterFactory {
     }
 
     public static Location getUniqueLocation(List<Place> places) {
-        AtomicReference<Boolean> regenerate = new AtomicReference<>(false);
+        BooleanProperty regenerate = new SimpleBooleanProperty();
+        IntegerProperty x = new SimpleIntegerProperty();
+        IntegerProperty y = new SimpleIntegerProperty();
         Random random = new Random();
-        Location location;
         do {
-            int x = random.nextInt(9);
-            int y = random.nextInt(9);
+            regenerate.set(false);
+            x.set(random.nextInt(9));
+            y.set(random.nextInt(9));
             if (null != places && places.size() > 0) {
-                places.forEach(place ->  {
-                    if (place.getLocation().getX() == x && place.getLocation().getY() == y) {
-                        regenerate.set(true);
-                    }
-                });
+                if (places.stream().anyMatch(place -> place.getLocation().getX() == x.get() && place.getLocation().getY() == y.get())) {
+                    regenerate.set(true);
+                }
             }
-            location = new Location.Builder(x)
-                    .withY(y)
-                    .build();
         } while (regenerate.get());
-        return location;
+        return new Location.Builder(x.get())
+                .withY(y.get())
+                .build();
     }
 }
